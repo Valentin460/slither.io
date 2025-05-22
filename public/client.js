@@ -14,6 +14,7 @@ let gameStarted = false;
 let boosting = false;
 
 const mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+const touch = { x: canvas.width / 2, y: canvas.height / 2 };
 
 const menu = document.getElementById("menu");
 const usernameInput = document.getElementById("username");
@@ -33,6 +34,14 @@ window.addEventListener("mousedown", (e) => {
   
 window.addEventListener("mouseup", (e) => {
     if (e.button === 0) boosting = false;
+});
+
+canvas.addEventListener("touchmove", (e) => {
+    if (e.touches.length > 0) {
+        const touchEvent = e.touches[0];
+        touch.x = touchEvent.clientX;
+        touch.y = touchEvent.clientY;
+    }
 });
 
 playBtn.addEventListener("click", () => {
@@ -132,7 +141,9 @@ function drawText(text, x, y, size = 16, color = "#fff") {
     }
 
     const head = snake[0] || { x: me.x, y: me.y };
-    const angle = Math.atan2(mouse.y - canvas.height / 2, mouse.x - canvas.width / 2);
+    const isTouch = 'ontouchstart' in window;
+    const target = isTouch ? touch : mouse;
+    const angle = Math.atan2(target.y - canvas.height / 2, target.x - canvas.width / 2);
     const speed = boosting ? 3 : 1.5;
     const newX = head.x + Math.cos(angle) * speed;
     const newY = head.y + Math.sin(angle) * speed;
